@@ -6,25 +6,43 @@ body {
     background-image: linear-gradient(black, red, black);
     overflow-y: scroll;
   }
+/*Navbar Styles*/
+.navbar{
+    color: white;
+    position: sticky;
+    display: flex;
+    width: 99%;
+}
+.navbar h1{
+    margin-left: 45%;
+}
+.navbar button{
+    margin-left: 15%;
+    width: 100px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 27%;
+}
   /*Filter Styles*/
   .filter-container {
-    top: 100px;
+    top: 200px;
     position: sticky;
     align-self: flex-start;
     background-color: white;
     border-radius: 20px;
     padding: 10px;
     width: 250px;
+    left: 50px;
   }
 
   /*Lessons Styles*/
   .all-lessons-container {
     position: relative;
     margin-top: -225px ;
-    margin-left: 27%;
+    margin-left: 35%;
     border-radius: 20px;
     background-color: white;
-    width: 63%;
+    width: 47%;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
@@ -34,6 +52,13 @@ body {
     display: grid;
     grid-template-columns: 300px 400px;
     border-top: 1px solid black;
+  }
+  .lesson-box button{
+    background-color: darkred;
+    color: white;
+    font-weight: bold;
+    border-radius: 10px;
+    cursor: pointer;
   }
   #subject-title{
     font-size: x-large;
