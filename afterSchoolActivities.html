@@ -35,7 +35,7 @@
                     <div class="search-container">
                         <h1>Search</h1>
                         <p>
-                            <input type="text" id="search-query" v-model="search_query" placeholder="Search here!">
+                            <input type="text" id="search-query" v-model.trim="searchQuery" placeholder="Search here!">
                         </p>
                     </div>
                     <div class="sort-container">
@@ -53,7 +53,7 @@
                             <label for="rating">Rating</label><br>
                         </p>
                         <h1>Order</h1>
-                        <input type="radio" id="asc" value="ascending" v-model="sortOrder" checked>
+                        <input type="radio" id="asc" value="ascending" v-model="sortOrder">
                         <label for="asc">Ascending</label><br>
                         <input type="radio" id="desc" value="descending" v-model="sortOrder">
                         <label for="desc">Descending</label><br><br>
@@ -202,8 +202,8 @@
 
                 cart: [], //array to store items in shopping cart
                 sortType: '',
-                sortOrder: '',
-                search_query: '',
+                sortOrder: 'ascending',
+                searchQuery: '',
             },
             methods: {
                 addToCart: function (lesson) {
@@ -254,6 +254,11 @@
                 //Sorting method
                 sortedLessons() {
                     let lessonsArray = this.lessons.slice(0);
+                    //Search feature
+                    let query = this.searchQuery.toLowerCase();
+                    lessonsArray = lessonsArray.filter(lesson =>
+                        lesson.subject.toLowerCase().includes(query) || lesson.location.toLowerCase().includes(query)
+                    );
                     //Sorting subject asc
                     if (this.sortType === "subject" && this.sortOrder === "ascending") {
                         function compare(a, b) {
