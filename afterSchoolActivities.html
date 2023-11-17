@@ -254,7 +254,62 @@
                 //Sorting method
                 sortedLessons() {
                     let lessonsArray = this.lessons.slice(0);
-
+                    //Sorting subject asc
+                    if (this.sortType === "subject" && this.sortOrder === "ascending") {
+                        function compare(a, b) {
+                            let sub1 = a.subject.toLowerCase();
+                            let sub2 = b.subject.toLowerCase();
+                            if (sub1 > sub2) {
+                                return 1;
+                            }
+                            if (sub1 < sub2) {
+                                return -1;
+                            }
+                            return 0;
+                        }
+                    }
+                    //Sorting subject desc
+                    if (this.sortType === "subject" && this.sortOrder === "descending") {
+                        function compare(a, b) {
+                            let sub1 = a.subject.toLowerCase();
+                            let sub2 = b.subject.toLowerCase();
+                            if (sub1 < sub2) {
+                                return 1;
+                            }
+                            if (sub1 > sub2) {
+                                return -1;
+                            }
+                            return 0;
+                        }
+                    }
+                    //Sorting location asc
+                    if (this.sortType === "location" && this.sortOrder === "ascending") {
+                        function compare(a, b) {
+                            let loc1 = a.location.toLowerCase();
+                            let loc2 = b.location.toLowerCase();
+                            if (loc1 > loc2) {
+                                return 1;
+                            }
+                            if (loc1 < loc2) {
+                                return -1;
+                            }
+                            return 0;
+                        }
+                    }
+                    //Sorting location desc
+                    if (this.sortType === "location" && this.sortOrder === "descending") {
+                        function compare(a, b) {
+                            let loc1 = a.location.toLowerCase();
+                            let loc2 = b.location.toLowerCase();
+                            if (loc1 < loc2) {
+                                return 1;
+                            }
+                            if (loc1 > loc2) {
+                                return -1;
+                            }
+                            return 0;
+                        }
+                    }
                     //Sorting price asc
                     if (this.sortType === "price" && this.sortOrder === "ascending") {
                         function compare(a, b) {
