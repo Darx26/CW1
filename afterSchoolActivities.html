@@ -18,7 +18,13 @@
             <div v-if="showLesson" class="lessons-container">
                 <div class="navbar">
                     <h1>After School Activities</h1>
-                    <button v-on:click='showCheckout'>
+                    <button v-on:click='showCheckout' v-if="cartItemCount > 0">
+                        <!--'cartItemCount is used the same way as a data property'-->
+                        {{ cartItemCount }}
+                        <!--add the cart icon-->
+                        <span class="fas fa-cart-plus"></span>Checkout
+                    </button>
+                    <button disabled="disabled" v-else style="opacity: 0.7;">
                         <!--'cartItemCount is used the same way as a data property'-->
                         {{ cartItemCount }}
                         <!--add the cart icon-->
@@ -35,27 +41,26 @@
                     <div class="sort-container">
                         <h1>Sort</h1>
                         <p>
-                            <input type="radio" id="subject" value="subject" v-model="order.method">
+                            <input type="radio" id="subject" value="subject" v-model="sortType">
                             <label for="subject">Subject</label><br>
-                            <input type="radio" id="location" value="location" v-model="order.method">
+                            <input type="radio" id="location" value="location" v-model="sortType">
                             <label for="location">Location</label><br>
-                            <input type="radio" id="price" value="price">
+                            <input type="radio" id="price" value="price" v-model="sortType">
                             <label for="price">Price</label><br>
-                            <input type="radio" id="availableInventory" value="availableInventory"
-                                v-model="order.method">
+                            <input type="radio" id="availableInventory" value="availableInventory" v-model="sortType">
                             <label for="availableInventory">Available Inventory</label><br>
-                            <input type="radio" id="rating" value="rating" v-model="order.method">
+                            <input type="radio" id="rating" value="rating" v-model="sortType">
                             <label for="rating">Rating</label><br>
                         </p>
                         <h1>Order</h1>
-                        <input type="radio" id="asc" value="ascending" v-model="order.method">
+                        <input type="radio" id="asc" value="ascending" v-model="sortOrder" checked>
                         <label for="asc">Ascending</label><br>
-                        <input type="radio" id="desc" value="descending" v-model="order.method">
+                        <input type="radio" id="desc" value="descending" v-model="sortOrder">
                         <label for="desc">Descending</label><br><br>
                     </div>
                 </div>
                 <div class="all-lessons-container">
-                    <div class="lesson-box" v-for="lesson in lessons">
+                    <div class="lesson-box" v-for="lesson in sortedLessons">
                         <figure>
                             <!--bind 'src' attr to 'lesson.image' in 'data'-->
                             <img v-bind:src="lesson.image" style="height: 200px; width: 200px;">
@@ -96,6 +101,9 @@
                         <!--add the cart icon-->
                         <span class="fas fa-cart-plus"></span>Checkout
                     </button>
+                </div>
+                <div class="cart-items">
+
                 </div>
                 <p>
                     <strong>First Name:</strong>
@@ -193,15 +201,13 @@
                 },
 
                 cart: [], //array to store items in shopping cart
+                sortType: '',
+                sortOrder: '',
                 search_query: '',
             },
             methods: {
-                // addToCart: function (lesson) {
-                //     this.cart.push(lesson.id);
-                //     console.log(this.cart);
-                // },
                 addToCart: function (lesson) {
-                    console.log(lesson.id);
+                    //console.log(lesson.id);
 
                     let lessonFound = false;
 
@@ -224,46 +230,87 @@
                         console.log(`Product ID: ${item.id}, Quantity: ${item.quantity}`);
                         //console.log(item.quantity);
                         //To Reduce availableInventory when item added to cart
-                        if(item.id === lesson.id){
-                            if(lesson.availableInventory > 0){
+                        if (item.id === lesson.id) {
+                            if (lesson.availableInventory > 0) {
                                 lesson.availableInventory = 5;
                                 lesson.availableInventory -= item.quantity;
                                 //console.log("From Lessons.js: " + lesson.availableInventory);
                             }
                         }
                     });
-                    
+
                 },
 
                 showCheckout() {
                     this.showLesson = this.showLesson ? false : true;
                 },
-                cartCount(id) {
-                    let count = 0;
-                    for (let i = 0; i < this.cart.length; i++) {
-                        if (this.cart[i] === id) {
-                            count++;
-                        }
-                    }
-                    return count;
-                },
-                canAddToCart: function (product) {
-                    return this.product.availableInventory > this.cartCount(product.id);
-                },
-                submitForm() { alert('Order Submitted!') }
+                submitForm() { alert('Order Submitted!') },
             },
             computed: { //the computed property object
                 cartItemCount: function () {  //the property name
                     //its value when calculated
                     return this.cart.length || '';
                 },
-                sortedLessons(type, order) {
+                //Sorting method
+                sortedLessons() {
                     let lessonsArray = this.lessons.slice(0);
-                    if (type === ("price")) {
+
+                    //Sorting price asc
+                    if (this.sortType === "price" && this.sortOrder === "ascending") {
                         function compare(a, b) {
-                            if (a.sortType > b.sortType)
+                            if (a.price > b.price)
                                 return 1;
-                            if (a.sortType < b.sortType)
+                            if (a.price < b.price)
+                                return -1;
+                            return 0;
+                        }
+                    }
+                    //Sorting price desc
+                    if (this.sortType === "price" && this.sortOrder === "descending") {
+                        function compare(a, b) {
+                            if (a.price < b.price)
+                                return 1;
+                            if (a.price > b.price)
+                                return -1;
+                            return 0;
+                        }
+                    }
+                    //Sorting rating asc
+                    if (this.sortType === "rating" && this.sortOrder === "ascending") {
+                        function compare(a, b) {
+                            if (a.rating > b.rating)
+                                return 1;
+                            if (a.rating < b.rating)
+                                return -1;
+                            return 0;
+                        }
+                    }
+                    //Sorting rating desc
+                    if (this.sortType === "rating" && this.sortOrder === "descending") {
+                        function compare(a, b) {
+                            if (a.rating < b.rating)
+                                return 1;
+                            if (a.rating > b.rating)
+                                return -1;
+                            return 0;
+                        }
+                    }
+                    //Sorting available inventory asc
+                    if (this.sortType === "availableInventory" && this.sortOrder === "ascending") {
+                        function compare(a, b) {
+                            if (a.availableInventory > b.availableInventory)
+                                return 1;
+                            if (a.availableInventory < b.availableInventory)
+                                return -1;
+                            return 0;
+                        }
+                    }
+                    //Sorting available inventory desc
+                    if (this.sortType === "availableInventory" && this.sortOrder === "descending") {
+                        function compare(a, b) {
+                            if (a.availableInventory < b.availableInventory)
+                                return 1;
+                            if (a.availableInventory > b.availableInventory)
                                 return -1;
                             return 0;
                         }
@@ -271,6 +318,7 @@
 
                     return lessonsArray.sort(compare);
                 }
+
             }
         });
     </script>
