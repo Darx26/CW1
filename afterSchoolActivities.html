@@ -142,7 +142,7 @@
                         <input v-model.trim="order.contactNumber" />
 
                         <!--This button will be displayed when 'canAddToCart' is True-->
-                        <button  v-if="order.name != '' && order.contactNumber != ''">
+                        <button v-on:click="submitForm()" v-if="order.name != '' && order.contactNumber != ''">
                             Place Order!
                         </button>
 
@@ -217,6 +217,7 @@
                 removeFromCart(lesson) {
                     console.log(lesson);
                 },
+                submitForm() { alert('Order Submitted!') },
             },
             computed: { //the computed property object
                 cartItemCount: function () {  //the property name
