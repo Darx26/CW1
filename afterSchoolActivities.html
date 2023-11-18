@@ -134,12 +134,12 @@
                         <strong>Name:</strong>
                         <!--This input field is bound to 'firstName' in the 'order' object-->
                         <!-- <input v-model="order.firstName"/> -->
-                        <input v-model.trim="order.name" />
+                        <input v-model.trim="order.name" placeholder="Enter Name Here"/>
 
                         <strong>Contact Number:</strong>
                         <!--This input field is bound to 'lastName' in the 'order' object-->
                         <!-- <input v-model="order.lastName"/> -->
-                        <input v-model.trim="order.contactNumber" />
+                        <input v-model.trim="order.contactNumber" placeholder="05X-XXX-XXXX"/>
 
                         <!--This button will be displayed when 'canAddToCart' is True-->
                         <button v-on:click="submitForm()" v-if="order.name != '' && order.contactNumber != ''">
@@ -149,7 +149,7 @@
                         <!--This button will be displayed otherwise-->
                         <button disabled="disabled" v-else style="opacity: 0.5;">
                             Place Order!
-                        </button>
+                        </button>&nbsp;&nbsp;<span id="errorMsg" style="color: red;"></span>
                     </p>
                 </div>
             </div>
@@ -225,7 +225,22 @@
                         this.cart.splice(foundIndex, 1); //remove item from cart array
                     }
                 },
-                submitForm() { alert('Order Submitted!') },
+                submitForm() {
+                    let errorMessage = document.getElementById("errorMsg");
+                    let nameRegex = new RegExp(/^[a-zA-Z ]{2,30}$/); //regular expression for name (alphabets only, 2-30 characters)
+                    let numberRegex = new RegExp(/^\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})$/); //regular expression for contact number (length 10)
+                    
+                    if(!nameRegex.test(this.order.name)){ //name validation
+                        errorMessage.innerHTML = "Please use letters only (2-30 characters)";
+                        return;
+                    }
+
+                    if (!numberRegex.test(this.order.contactNumber)) { //number validation
+                        errorMessage.innerHTML = "Please enter a valid phone number";
+                        return;
+                    }
+                    alert('Order Submitted!')
+                },
             },
             computed: { //the computed property object
                 cartItemCount: function () {  //the property name
