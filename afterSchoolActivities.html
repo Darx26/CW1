@@ -116,7 +116,7 @@
                                 Price: {{lesson.price * item.quantity}} <br><br><br>
 
                                 <!--This button will be displayed when 'canAddToCart' is True-->
-                                <button v-on:click="removeFromCart(item)" v-if="lesson.availableInventory > 0">
+                                <button v-on:click="removeFromCart(lesson)" v-if="lesson.availableInventory > 0">
                                     REMOVE
                                 </button>
 
@@ -198,7 +198,6 @@
                     // Log each element of the cart individually
                     this.cart.forEach(item => {
                         console.log(`Product ID: ${item.id}, Quantity: ${item.quantity}`);
-                        //console.log(item.quantity);
                         //To Reduce availableInventory when item added to cart
                         if (item.id === lesson.id) {
                             if (lesson.availableInventory > 0) {
@@ -215,7 +214,16 @@
                     this.showLesson = this.showLesson ? false : true;
                 },
                 removeFromCart(lesson) {
-                    console.log(lesson);
+                    let foundIndex = this.cart.findIndex(item => item.id === lesson.id); //to find index of cart element
+
+                    if (foundIndex != -1) { //if cart element is found (not -1)
+                        this.cart.forEach(item => { //loop through cart array to find quantity
+                            if (item.id === lesson.id) {
+                                lesson.availableInventory += item.quantity; //change available inventory
+                            }
+                        });
+                        this.cart.splice(foundIndex, 1); //remove item from cart array
+                    }
                 },
                 submitForm() { alert('Order Submitted!') },
             },
