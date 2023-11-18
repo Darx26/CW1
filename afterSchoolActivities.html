@@ -94,7 +94,7 @@
             <div v-else class="checkout-container">
                 <!--CHECKOUT INFORMATION-->
                 <div class="navbar">
-                    <h1>Checkout</h1>
+                    <h1>Cart Details</h1>
                     <button v-on:click='showCheckout'>
                         <!--'cartItemCount is used the same way as a data property'-->
                         {{ cartItemCount }}
@@ -102,72 +102,56 @@
                         <span class="fas fa-cart-plus"></span>Checkout
                     </button>
                 </div>
-                <div class="cart-items">
+                <div class="cart-container">
+                    <div class="cart-items" v-for="item in cart">
+                        <div class="lesson-box" v-for="lesson in lessons" v-if="lesson.id === item.id">
+                            <figure>
+                                <!--bind 'src' attr to 'lesson.image' in 'data'-->
+                                <img v-bind:src="lesson.image" style="height: 200px; width: 200px;">
+                            </figure>
+                            <p>
+                                <span id="subject-title">{{lesson.subject}}</span> <br><br><br>
+                                Location: {{lesson.location}} <br><br>
+                                Quantity: {{item.quantity}} <br><br>
+                                Price: {{lesson.price * item.quantity}} <br><br><br>
 
+                                <!--This button will be displayed when 'canAddToCart' is True-->
+                                <button v-on:click="removeFromCart(item)" v-if="lesson.availableInventory > 0">
+                                    REMOVE
+                                </button>
+
+                                <!--This button will be displayed otherwise-->
+                                <button disabled="disabled" v-else style="opacity: 0.5;">
+                                    REMOVE
+                                </button>
+                            </p>
+                        </div>
+                    </div>
                 </div>
-                <p>
-                    <strong>First Name:</strong>
-                    <!--This input field is bound to 'firstName' in the 'order' object-->
-                    <!-- <input v-model="order.firstName"/> -->
-                    <input v-model.trim="order.firstName" />
-                </p>
-                <p>
-                    <strong>Last Name:</strong>
-                    <!--This input field is bound to 'lastName' in the 'order' object-->
-                    <!-- <input v-model="order.lastName"/> -->
-                    <input v-model.trim="order.lastName" />
-                </p>
-                <p>
-                    <strong>Address:</strong>
-                    <input v-model="order.address" />
-                </p>
-                <p>
-                    <strong>City:</strong>
-                    <input v-model="order.city" />
-                </p>
-                <p>
-                    <strong>State:</strong>
-                    <!--Using v-for-->
-                    <select v-model="order.state">
-                        <option disabled value="">State</option>
-                        <option v-for="(state,key) in states" v-bind:value="state">
-                            {{key}}
-                        </option>
-                    </select>
-                </p>
-                <p>
-                    <strong>Zip/Postal Code:</strong>
-                    <!-- <input v-model="order.zip"/> -->
-                    <input v-model.number="order.zip" type="number" />
-                </p>
-                <!--Checkbox button-->
-                <!--Using v-bind-->
-                <p>
-                    <input type="checkbox" id="gift" value="true" v-model="order.gift"
-                        v-bind:true-value="order.sendGift" v-bind:false-value="order.dontSendGift">
-                    <label for="gift">Ship as gift</label>
+                <div class="checkout-box">
+                    <p>
+                        <span id="subject-title">Checkout Details</span> <br><br>
+                        <strong>Name:</strong>
+                        <!--This input field is bound to 'firstName' in the 'order' object-->
+                        <!-- <input v-model="order.firstName"/> -->
+                        <input v-model.trim="order.name" />
 
-                </p>
-                <!--Radio button-->
-                <p>
-                    <input type="radio" id="home" value="Home" v-model="order.method">
-                    <label for="home">Home</label>
-                    <input type="radio" id="business" value="Business" v-model="order.method">
-                    <label for="business">Business</label>
-                </p>
-                <!--ORDER INFORMATION-->
-                <h2>Order Information</h2>
-                <p>First Name: {{order.firstName}} </p>
-                <p>Last Name: {{order.lastName}} </p>
-                <p>Address: {{order.address}} </p>
-                <p>City: {{order.city}} </p>
-                <p>Zip: {{order.zip}} </p>
-                <p>State: {{order.state}} </p>
-                <p>Gift: {{order.gift}} </p>
-                <p>Method: {{order.method}} </p>
+                        <strong>Contact Number:</strong>
+                        <!--This input field is bound to 'lastName' in the 'order' object-->
+                        <!-- <input v-model="order.lastName"/> -->
+                        <input v-model.trim="order.contactNumber" />
 
-                <!--PLACE ORDER BUTTON-->
-                <button v-on:click="submitForm">Place Order</button>
+                        <!--This button will be displayed when 'canAddToCart' is True-->
+                        <button  v-if="order.name != '' && order.contactNumber != ''">
+                            Place Order!
+                        </button>
+
+                        <!--This button will be displayed otherwise-->
+                        <button disabled="disabled" v-else style="opacity: 0.5;">
+                            Place Order!
+                        </button>
+                    </p>
+                </div>
             </div>
     </div>
 
@@ -181,29 +165,15 @@
             data: {
                 showLesson: true,
                 lessons: lessons,
-                order: {
-                    firstName: '',
-                    lastName: '',
-                    address: '',
-                    city: '',
-                    zip: '',
-                    state: '',
-                    method: 'Home',
-                    // gift: false,
-                    sendGift: 'Send as Gift',
-                    dontSendGift: 'Do Not Send As Gift'
-                },
-                states: {
-                    AL: 'Alabama',
-                    AR: 'Arizona',
-                    CA: 'California',
-                    NV: 'Nevada'
-                },
-
                 cart: [], //array to store items in shopping cart
                 sortType: '',
-                sortOrder: 'ascending',
+                sortOrder: 'ascending', //to default sorting order to ascending
                 searchQuery: '',
+                order: {
+                    name: '',
+                    contactNumber: '',
+                    address: '',
+                },
             },
             methods: {
                 addToCart: function (lesson) {
@@ -244,7 +214,9 @@
                 showCheckout() {
                     this.showLesson = this.showLesson ? false : true;
                 },
-                submitForm() { alert('Order Submitted!') },
+                removeFromCart(lesson) {
+                    console.log(lesson);
+                },
             },
             computed: { //the computed property object
                 cartItemCount: function () {  //the property name
